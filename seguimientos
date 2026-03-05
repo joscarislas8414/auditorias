@@ -1,0 +1,977 @@
+import { useState, useMemo, useEffect } from "react";
+
+const RAW_DATA = [{"id":1083,"num":"2026-02-OIC-8-IZC-AAD-004","tipo":"Auditorías a Adquisiciones","inst":"Colegio de Postgraduados","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Secretaría Administrativa","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":778772129,"muestra":233631638.7,"pct":30,"precedente":"03/2023","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"IZC","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios del Colegio de Postgraduados pa"},{"id":1089,"num":"2026-02-OIC-8-I00-AFC-002","tipo":"Auditorías Financieras y Cumplimiento","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Unidad de Administración","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":362592662,"muestra":108777798.6,"pct":30,"precedente":null,"programa":"Recursos Humanos","auditor":"I00","objetivo":"Verificar que la administración de los recursos humanos, en los procesos de ingresos, permanencia, capacitación y evalua"},{"id":1090,"num":"2026-02-OIC-8-I00-AAD-003","tipo":"Auditorías a Adquisiciones","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Unidad de Administración","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":116371017,"muestra":34911305.1,"pct":30,"precedente":"8/2022","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"I00","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios de la Comisión Nacional de Acua"},{"id":1103,"num":"2026-02-OIC-8-JAG-AAD-004","tipo":"Auditorías a Adquisiciones","inst":"Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Coordinación de Administración y Sistemas","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":197920903,"muestra":59376270.9,"pct":30,"precedente":"03/2023","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"JAG","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios del Instituto Nacional de Inves"},{"id":1107,"num":"2026-02-OIC-8-JBK-AAD-003","tipo":"Auditorías a Adquisiciones","inst":"Productora Nacional de Biológicos Veterinarios","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección de Planeación y Administración","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":83501533,"muestra":25050459.9,"pct":30,"precedente":"2024-08-JBK-OECP-VS-001","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"JBK","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios de la Productora Nacional del B"},{"id":1111,"num":"2026-02-OIC-8-100-AAD-003","tipo":"Auditorías a Adquisiciones","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Recursos Materiales, Inmuebles y Servicios","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":511827302,"muestra":153548190.6,"pct":30,"precedente":null,"programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"100","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios de la Secretaría de Agricultura"},{"id":1126,"num":"2026-02-OIC-8-B00-AAD-005","tipo":"Auditorías a Adquisiciones","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Administración e Informática","ini_rev":"2026-01-01","fin_rev":"2026-03-31","ini_eje":"2026-01-16","fin_eje":"2026-04-01","sem_ini":1,"sem_fin":12,"semanas":12,"universo":603058929,"muestra":180917678.7,"pct":30,"precedente":"10/22","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"B00","objetivo":"Constatar que la planeación y ejecución de las adquisiciones, arrendamientos y servicios del Servicio Nacional de Sanida"},{"id":1084,"num":"2026-02-OIC-8-IZC-VIN-005","tipo":"Visitas de Inspección","inst":"Colegio de Postgraduados","caracter":"Correctivo","enfoque":"A procesos completos","area":"Secretaría Administrativa","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"IZC","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1087,"num":"2026-02-OIC-8-D00-VIN-003","tipo":"Visitas de Inspección","inst":"Colegio Superior Agropecuario del Estado de Guerrero","caracter":"Correctivo","enfoque":"A procesos completos","area":"Dirección General del CSAEGRO","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"D00","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1092,"num":"2026-02-OIC-8-I00-VIN-005","tipo":"Visitas de Inspección","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"A procesos completos","area":"Unidad de Administración","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"I00","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1104,"num":"2026-02-OIC-8-JAG-VIN-005","tipo":"Visitas de Inspección","inst":"Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias","caracter":"Correctivo","enfoque":"A procesos completos","area":"Coordinación de Administración y Sistemas","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"JAG","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1108,"num":"2026-02-OIC-8-JBK-VIN-004","tipo":"Visitas de Inspección","inst":"Productora Nacional de Biológicos Veterinarios","caracter":"Correctivo","enfoque":"A procesos completos","area":"Dirección de Planeación y Administración","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"JBK","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1112,"num":"2026-02-OIC-8-100-VIN-004","tipo":"Visitas de Inspección","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"A procesos completos","area":"Dirección General de Programación, Presupuesto y Finanzas","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"100","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1121,"num":"2026-02-OIC-8-C00-VIN-002","tipo":"Visitas de Inspección","inst":"Servicio Nacional de Inspección y Certificación de Semillas","caracter":"Correctivo","enfoque":"A procesos completos","area":"Dirección de Administración","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"C00","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1128,"num":"2026-02-OIC-8-B00-VIN-007","tipo":"Visitas de Inspección","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"A procesos completos","area":"Dirección General de Administración e Informática","ini_rev":"2025-01-01","fin_rev":"2026-03-15","ini_eje":"2026-02-06","fin_eje":"2026-04-17","sem_ini":4,"sem_fin":14,"semanas":11,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"B00","objetivo":"Verificar que la institución dé cumplimiento a las Disposiciones Generales en Materia de Funciones de Tesorería, respect"},{"id":1100,"num":"2026-02-OIC-8-JAG-AFC-001","tipo":"Auditorías Financieras y Cumplimiento","inst":"Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Centro de Investigación Regional Centro","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-04-30","sem_ini":1,"sem_fin":16,"semanas":16,"universo":417874867.4,"muestra":125362460.2,"pct":29,"precedente":"2025-02-OIC-8-JAG-AFC-001","programa":"Actividades Específicas Institucionales","auditor":"JAG","objetivo":"Fiscalizar el cumplimiento normativo y contractual en la planeación, ejecución, seguimiento y conclusión de los Proyectos"},{"id":1122,"num":"2026-02-OIC-8-B00-AFC-001","tipo":"Auditorías Financieras y Cumplimiento","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Sanidad Vegetal","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-04-30","sem_ini":1,"sem_fin":16,"semanas":16,"universo":3329489271,"muestra":998846781,"pct":29,"precedente":null,"programa":"Presupuesto - Gasto Corriente","auditor":"B00","objetivo":"Verificar que la ejecución del gasto del Programa Presupuestario S263 Sanidad e Inocuidad Agroalimentaria en su componente"},{"id":1081,"num":"2026-02-OIC-8-IZC-AFC-002","tipo":"Auditorías Financieras y Cumplimiento","inst":"Colegio de Postgraduados","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección de Investigación, Secretaría Académica","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-24","fin_eje":"2026-06-19","sem_ini":15,"sem_fin":23,"semanas":9,"universo":10000000,"muestra":3000000,"pct":30,"precedente":null,"programa":"Presupuesto - Gasto de Inversión","auditor":"IZC","objetivo":"Verificar que el proceso de asignación de recursos a los proyectos de investigación se realizó conforme a la normativa ap"},{"id":1091,"num":"2026-02-OIC-8-I00-ADC-004","tipo":"Auditorías de Cumplimiento","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Inspección y Vigilancia","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-06-26","sem_ini":1,"sem_fin":24,"semanas":24,"universo":null,"muestra":null,"pct":0,"precedente":"04/2023","programa":"Actividades Específicas Institucionales","auditor":"I00","objetivo":"Constatar que los actos de inspección y vigilancia realizados por los oficiales federales de pesca se realicen en apego"},{"id":1120,"num":"2026-02-OIC-8-C00-AAD-001","tipo":"Auditorías a Adquisiciones","inst":"Servicio Nacional de Inspección y Certificación de Semillas","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección de Administración","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-10","fin_eje":"2026-06-26","sem_ini":13,"sem_fin":24,"semanas":12,"universo":15131316.98,"muestra":4539395.094,"pct":30,"precedente":"7/2022","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"C00","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de la Dirección"},{"id":1127,"num":"2026-02-OIC-8-B00-ADC-006","tipo":"Auditorías de Cumplimiento","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Sanidad Vegetal","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-06-26","sem_ini":1,"sem_fin":24,"semanas":24,"universo":null,"muestra":null,"pct":0,"precedente":"2025-02-OIC-8-B00-VIN-007","programa":"Actividades Específicas Institucionales","auditor":"B00","objetivo":"Constatar que las visitas de verificación realizadas por el Servicio Nacional de Sanidad e Inocuidad Agroalimentaria a e"},{"id":1080,"num":"2026-02-OIC-8-IZC-AAD-001","tipo":"Auditorías a Adquisiciones","inst":"Colegio de Postgraduados","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Secretaría Administrativa","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-07-03","sem_ini":1,"sem_fin":25,"semanas":25,"universo":604076304,"muestra":181222891,"pct":29,"precedente":"03/2023","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"IZC","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1106,"num":"2026-02-OIC-8-JBK-AAD-002","tipo":"Auditorías a Adquisiciones","inst":"Productora Nacional de Biológicos Veterinarios","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección de Planeación y Administración","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-01-16","fin_eje":"2026-07-03","sem_ini":1,"sem_fin":25,"semanas":25,"universo":18092474,"muestra":7417914,"pct":40,"precedente":"2024-08-JBK-OECP-VS-001","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"JBK","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1109,"num":"2026-02-OIC-8-100-AAD-001","tipo":"Auditorías a Adquisiciones","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Recursos Materiales, Inmuebles y Servicios","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-03-13","fin_eje":"2026-07-03","sem_ini":9,"sem_fin":25,"semanas":17,"universo":221119220,"muestra":66335760,"pct":29,"precedente":null,"programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"100","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1125,"num":"2026-02-OIC-8-B00-AAD-004","tipo":"Auditorías a Adquisiciones","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Administración e Informática","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-01","fin_eje":"2026-07-17","sem_ini":12,"sem_fin":27,"semanas":16,"universo":1180234555,"muestra":354070367,"pct":30,"precedente":"2025-02-OIC-8-B00-VSA-002","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"B00","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1101,"num":"2026-02-OIC-8-JAG-AAD-002","tipo":"Auditorías a Adquisiciones","inst":"Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Coordinación de Administración y Sistemas","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-10","fin_eje":"2026-07-24","sem_ini":13,"sem_fin":28,"semanas":16,"universo":427600000,"muestra":128280000,"pct":30,"precedente":"03/2023","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"JAG","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1117,"num":"2026-02-OIC-8-100-ADC-009","tipo":"Auditorías de Cumplimiento","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Unidad de Bienestar para el Campo","ini_rev":"2025-01-06","fin_rev":"2026-06-30","ini_eje":"2026-05-08","fin_eje":"2026-08-28","sem_ini":17,"sem_fin":33,"semanas":17,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Padrones de Beneficiarios","auditor":"100","objetivo":"Revisar que los padrones de beneficiarios de los programas Fertilizantes, Fertilizantes para el Bienestar y Producción p"},{"id":1123,"num":"2026-02-OIC-8-B00-AFC-002","tipo":"Auditorías Financieras y Cumplimiento","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Sanidad Vegetal","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-05-08","fin_eje":"2026-08-28","sem_ini":17,"sem_fin":33,"semanas":17,"universo":3329489271,"muestra":998846781,"pct":29,"precedente":"2025-02-OIC-8-B00-ADE-004","programa":"Presupuesto - Gasto Corriente","auditor":"B00","objetivo":"Verificar que la ejecución del gasto del Programa Presupuestario S263 Sanidad e Inocuidad Agroalimentaria, en su componente"},{"id":1110,"num":"2026-02-OIC-8-100-AAD-002","tipo":"Auditorías a Adquisiciones","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Oficinas de Representación en Entidades Federativas","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-01","fin_eje":"2026-09-25","sem_ini":12,"sem_fin":37,"semanas":26,"universo":41280090.49,"muestra":12384027,"pct":29,"precedente":null,"programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"100","objetivo":"Verificar que los procesos de contrataciones de bienes y servicios necesarios para la adecuada operación de las unidades"},{"id":1113,"num":"2026-02-OIC-8-100-AFC-005","tipo":"Auditorías Financieras y Cumplimiento","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Fertilizantes para el Bienestar","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-04-01","fin_eje":"2026-09-25","sem_ini":12,"sem_fin":37,"semanas":26,"universo":15838062388,"muestra":4751418716,"pct":29,"precedente":"2025-02-OIC-8-413-ADE-002","programa":"Actividades Específicas Institucionales","auditor":"100","objetivo":"Verificar que la entrega de Fertilizantes a los productores se haya realizado en cumplimiento a los criterios de elegibilidad"},{"id":1088,"num":"2026-02-OIC-8-I00-AAD-001","tipo":"Auditorías a Adquisiciones","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Unidad de Administración","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-07-03","fin_eje":"2026-10-02","sem_ini":25,"sem_fin":38,"semanas":14,"universo":134511547.6,"muestra":40353464.27,"pct":29,"precedente":"10/2023","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"I00","objetivo":"Verificar que las contrataciones de bienes y servicios efectuadas por la Comisión Nacional de Acuacultura y Pesca para la"},{"id":1118,"num":"2026-02-OIC-8-100-ADC-010","tipo":"Auditorías de Cumplimiento","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Producción para el Bienestar","ini_rev":"2026-01-01","fin_rev":"2026-08-31","ini_eje":"2026-03-13","fin_eje":"2026-10-02","sem_ini":9,"sem_fin":38,"semanas":30,"universo":17472000000,"muestra":5241600000,"pct":30,"precedente":"2025-02-OIC-8-215-AFC-003","programa":"Actividades Específicas Institucionales","auditor":"100","objetivo":"Constatar que el programa Producción para el Bienestar opere conforme a la normativa aplicable"},{"id":1082,"num":"2026-02-OIC-8-IZC-VIN-003","tipo":"Visitas de Inspección","inst":"Colegio de Postgraduados","caracter":"Preventivo","enfoque":"Temas sustantivos","area":"Secretaría Administrativa","ini_rev":"2026-01-01","fin_rev":"2026-09-30","ini_eje":"2026-07-24","fin_eje":"2026-10-16","sem_ini":28,"sem_fin":40,"semanas":13,"universo":7500000,"muestra":2250000,"pct":30,"precedente":null,"programa":"Presupuesto - Gasto Corriente","auditor":"IZC","objetivo":"Verificar que la captación, registro, manejo y control de los ingresos propios por prestación de servicios"},{"id":1102,"num":"2026-02-OIC-8-JAG-ADC-003","tipo":"Auditorías de Cumplimiento","inst":"Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Coordinación de Investigación, Innovación y Vinculación","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-08-14","fin_eje":"2026-11-20","sem_ini":31,"sem_fin":45,"semanas":15,"universo":null,"muestra":null,"pct":0,"precedente":null,"programa":"Actividades Específicas Institucionales","auditor":"JAG","objetivo":"Verificar que los acuerdos, convenios, contratos y cualquier otro instrumento jurídico suscrito por el Instituto"},{"id":1085,"num":"2026-02-OIC-8-D00-VSA-001","tipo":"Visitas de Supervisión a Adquisiciones","inst":"Colegio Superior Agropecuario del Estado de Guerrero","caracter":"Preventivo","enfoque":"Temas sustantivos","area":"Dirección General del CSAEGRO","ini_rev":"2026-01-01","fin_rev":"2026-11-30","ini_eje":"2026-08-07","fin_eje":"2026-11-27","sem_ini":30,"sem_fin":46,"semanas":17,"universo":38902463,"muestra":11670739,"pct":30,"precedente":"2025-02-OIC-8-D00-VSA-001","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"D00","objetivo":"Verificar que los procesos de planeación, contratación y administración de la adquisición de los productos necesarios"},{"id":1086,"num":"2026-02-OIC-8-D00-VIN-002","tipo":"Visitas de Inspección","inst":"Colegio Superior Agropecuario del Estado de Guerrero","caracter":"Preventivo","enfoque":"Temas sustantivos","area":"Dirección General del CSAEGRO","ini_rev":"2026-01-01","fin_rev":"2026-11-30","ini_eje":"2026-08-07","fin_eje":"2026-11-27","sem_ini":30,"sem_fin":46,"semanas":17,"universo":81376184,"muestra":24412855.2,"pct":30,"precedente":"2025-02-OIC-8-D00-VIN-002","programa":"Recursos Humanos","auditor":"D00","objetivo":"Verificar el ejercicio de los recursos destinados al pago de servicios personales en el ejercicio 2026"},{"id":1116,"num":"2026-02-OIC-8-100-AFC-008","tipo":"Auditorías Financieras y Cumplimiento","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Producción para el Bienestar","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-06-12","fin_eje":"2026-12-04","sem_ini":22,"sem_fin":47,"semanas":26,"universo":15702032372,"muestra":5241600000,"pct":33,"precedente":"2025-02-OIC-8-215-AFC-003","programa":"Actividades Específicas Institucionales","auditor":"100","objetivo":"Verificar que la entrega de apoyos se realice a los productores que cumplen los criterios y requisitos"},{"id":1105,"num":"2026-02-OIC-8-JBK-ADC-001","tipo":"Auditorías de Cumplimiento","inst":"Productora Nacional de Biológicos Veterinarios","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección Industrial","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-05-08","fin_eje":"2026-12-11","sem_ini":17,"sem_fin":48,"semanas":32,"universo":null,"muestra":null,"pct":0,"precedente":"03/2023","programa":"Actividades Específicas Institucionales","auditor":"JBK","objetivo":"Verificar que los procesos de producción de biológicos y químico farmacéuticos de uso veterinario se apeguen a la normativa"},{"id":1093,"num":"2026-02-OIC-8-I00-VIN-006","tipo":"Visitas de Inspección","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Preventivo","enfoque":"A procesos completos","area":"Dirección General de Ordenamiento Pesquero y Acuícola","ini_rev":"2026-01-01","fin_rev":"2026-11-27","ini_eje":"2026-07-03","fin_eje":"2026-12-18","sem_ini":25,"sem_fin":49,"semanas":25,"universo":null,"muestra":null,"pct":0,"precedente":"03/2022","programa":"Actividades Específicas Institucionales","auditor":"I00","objetivo":"Constatar que la Comisión Nacional de Acuacultura y Pesca otorgue permisos de pesca conforme a los principios"},{"id":1094,"num":"2026-02-OIC-8-I00-AFC-007","tipo":"Auditorías Financieras y Cumplimiento","inst":"Comisión Nacional de Acuacultura y Pesca","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Organización y Fomento","ini_rev":"2025-01-06","fin_rev":"2026-06-30","ini_eje":"2026-08-07","fin_eje":"2026-12-18","sem_ini":30,"sem_fin":49,"semanas":20,"universo":3127632139,"muestra":938289641.7,"pct":30,"precedente":"2025-02-OIC-8-I00-AFC-001","programa":"Actividades Específicas Institucionales","auditor":"I00","objetivo":"Revisar que la operación del Programa Fomento a la Agricultura, Ganadería, Pesca y Acuicultura, en su componente BIENPES"},{"id":1114,"num":"2026-02-OIC-8-100-AAD-006","tipo":"Auditorías a Adquisiciones","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Fertilizantes para el Bienestar","ini_rev":"2026-01-01","fin_rev":"2026-12-19","ini_eje":"2026-07-03","fin_eje":"2026-12-18","sem_ini":25,"sem_fin":49,"semanas":25,"universo":18200000000,"muestra":5460000000,"pct":30,"precedente":"2025-02-OIC-8-413-VSA-001","programa":"Adquisiciones, Arrendamientos y Servicios","auditor":"100","objetivo":"Verificar que la adquisición de fertilizantes para el bienestar a Petróleos Mexicanos se realice conforme a lo establecido"},{"id":1115,"num":"2026-02-OIC-8-100-ADC-007","tipo":"Auditorías de Cumplimiento","inst":"Secretaría de Agricultura y Desarrollo Rural","caracter":"Correctivo","enfoque":"Programas prioritarios","area":"Dirección General de Fertilizantes para el Bienestar","ini_rev":"2025-07-01","fin_rev":"2026-12-19","ini_eje":"2026-07-03","fin_eje":"2026-12-18","sem_ini":25,"sem_fin":49,"semanas":25,"universo":18200000000,"muestra":5460000000,"pct":30,"precedente":"2025-02-OIC-8-413-VSA-001","programa":"Actividades Específicas Institucionales","auditor":"100","objetivo":"Verificar que la distribución de fertilizantes en los centros de distribución corresponda a las necesidades operativas"},{"id":1124,"num":"2026-02-OIC-8-B00-AFC-003","tipo":"Auditorías Financieras y Cumplimiento","inst":"Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria","caracter":"Correctivo","enfoque":"Temas sustantivos","area":"Dirección General de Inocuidad Agroalimentaria","ini_rev":"2025-01-01","fin_rev":"2025-12-31","ini_eje":"2026-09-04","fin_eje":"2026-12-18","sem_ini":34,"sem_fin":49,"semanas":16,"universo":3329489271,"muestra":998846781,"pct":29,"precedente":"2025-02-OIC-8-B00-ICI-001","programa":"Presupuesto - Gasto Corriente","auditor":"B00","objetivo":"Verificar que la ejecución del gasto del Programa Presupuestario S263 Sanidad e Inocuidad Agroalimentaria, en su componente"}];
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const TODAY = new Date("2026-03-04");
+const WEEK_OF_YEAR_BASE = new Date("2026-01-12"); // Mon Jan 12 2026 = week 1 start
+const CURRENT_WEEK = Math.floor((TODAY - WEEK_OF_YEAR_BASE) / (7 * 86400000)) + 1; // ~8
+
+const TIPO_COLOR = {
+  "Auditorías a Adquisiciones":            "#F59E0B",
+  "Auditorías Financieras y Cumplimiento": "#3B82F6",
+  "Visitas de Inspección":                 "#10B981",
+  "Auditorías de Cumplimiento":            "#8B5CF6",
+  "Visitas de Supervisión a Adquisiciones":"#EC4899",
+};
+
+const AUDITOR_NAMES = {
+  IZC: "Auditor IZC", I00: "Auditor I00", JAG: "Auditor JAG",
+  JBK: "Auditor JBK", "100": "Auditor 100", B00: "Auditor B00",
+  D00: "Auditor D00", C00: "Auditor C00",
+};
+
+const INST_SHORT = {
+  "Colegio de Postgraduados": "COLPOS",
+  "Comisión Nacional de Acuacultura y Pesca": "CONAPESCA",
+  "Instituto Nacional de Investigaciones Forestales, Agrícolas y Pecuarias": "INIFAP",
+  "Productora Nacional de Biológicos Veterinarios": "PRONABIVE",
+  "Secretaría de Agricultura y Desarrollo Rural": "SADER",
+  "Servicio Nacional de Sanidad, Inocuidad y Calidad Agroalimentaria": "SENASICA",
+  "Colegio Superior Agropecuario del Estado de Guerrero": "CSAEGRO",
+  "Servicio Nacional de Inspección y Certificación de Semillas": "SNICS",
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const fmt = (n) => n == null ? "—" : new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:0}).format(n);
+const fmtM = (n) => n == null ? "—" : `$${(n/1e6).toFixed(1)}M`;
+const daysLeft = (d) => Math.ceil((new Date(d) - TODAY) / 86400000);
+
+function riskScore(a) {
+  let s = 0;
+  const dl = daysLeft(a.fin_eje);
+  if (dl < 0) s += 40;
+  else if (dl < 30) s += 25;
+  else if (dl < 60) s += 10;
+  if (a.semanas > 25) s += 20;
+  else if (a.semanas > 16) s += 10;
+  if (a.universo > 5e9) s += 20;
+  else if (a.universo > 1e9) s += 10;
+  if (!a.precedente) s += 10;
+  if (a.tipo === "Auditorías de Cumplimiento") s += 5;
+  return Math.min(s, 100);
+}
+
+function riskLabel(s) {
+  if (s >= 60) return { label: "ALTO", color: "#EF4444" };
+  if (s >= 35) return { label: "MEDIO", color: "#F59E0B" };
+  return { label: "BAJO", color: "#10B981" };
+}
+
+// ── Enriched data ────────────────────────────────────────────────────────────
+const DATA = RAW_DATA.map(a => ({
+  ...a,
+  instShort: INST_SHORT[a.inst] || a.inst,
+  risk: riskScore(a),
+  daysLeft: daysLeft(a.fin_eje),
+  tipoColor: TIPO_COLOR[a.tipo] || "#6B7280",
+  inProgress: CURRENT_WEEK >= a.sem_ini && CURRENT_WEEK <= a.sem_fin,
+  completed: CURRENT_WEEK > a.sem_fin,
+  pending: CURRENT_WEEK < a.sem_ini,
+}));
+
+// ── Sub-components ───────────────────────────────────────────────────────────
+
+function KPICard({ title, value, sub, accent, icon }) {
+  return (
+    <div style={{
+      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+      borderRadius: 12, padding: "20px 24px", position: "relative", overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 3,
+        background: accent, borderRadius: "12px 12px 0 0"
+      }}/>
+      <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
+      <div style={{ color: "#94A3B8", fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>{title}</div>
+      <div style={{ color: "#F1F5F9", fontSize: 32, fontWeight: 800, lineHeight: 1, fontFamily: "'JetBrains Mono', monospace" }}>{value}</div>
+      {sub && <div style={{ color: "#64748B", fontSize: 11, marginTop: 6 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function SectionHeader({ title, icon }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+      <span style={{ fontSize: 16 }}>{icon}</span>
+      <h2 style={{ margin: 0, color: "#F1F5F9", fontSize: 14, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase" }}>{title}</h2>
+      <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)", marginLeft: 8 }}/>
+    </div>
+  );
+}
+
+// ── GANTT ────────────────────────────────────────────────────────────────────
+function GanttChart({ data, onSelect }) {
+  const TOTAL_WEEKS = 52;
+  const COL_W = 14;
+  const ROW_H = 26;
+  const LABEL_W = 56;
+
+  const auditores = [...new Set(data.map(d => d.auditor))].sort();
+
+  return (
+    <div style={{ overflowX: "auto", overflowY: "auto", maxHeight: 520 }}>
+      <div style={{ minWidth: LABEL_W + TOTAL_WEEKS * COL_W + 20 }}>
+        {/* Month labels */}
+        <div style={{ display: "flex", marginLeft: LABEL_W, marginBottom: 2 }}>
+          {["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"].map((m, i) => (
+            <div key={m} style={{
+              width: (i === 0 ? 3 : i <= 1 ? 4 : i <= 2 ? 4 : 4) * COL_W,
+              width: Math.round(TOTAL_WEEKS / 12) * COL_W,
+              color: "#475569", fontSize: 10, fontWeight: 600, letterSpacing: "0.05em",
+              flexShrink: 0, textAlign: "center"
+            }}>{m}</div>
+          ))}
+        </div>
+        {/* Week numbers */}
+        <div style={{ display: "flex", marginLeft: LABEL_W, marginBottom: 6 }}>
+          {Array.from({ length: TOTAL_WEEKS }, (_, i) => i + 1).map(w => (
+            <div key={w} style={{
+              width: COL_W, flexShrink: 0, textAlign: "center",
+              color: w === CURRENT_WEEK ? "#F59E0B" : "#334155",
+              fontSize: 8, fontWeight: w === CURRENT_WEEK ? 800 : 400,
+            }}>{w % 4 === 0 ? w : ""}</div>
+          ))}
+        </div>
+
+        {auditores.map(aud => {
+          const audData = data.filter(d => d.auditor === aud);
+          return (
+            <div key={aud}>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+                <div style={{
+                  width: LABEL_W, color: "#F59E0B", fontSize: 10, fontWeight: 700,
+                  letterSpacing: "0.05em", flexShrink: 0, paddingRight: 8, textAlign: "right"
+                }}>{aud}</div>
+                <div style={{ display: "flex", position: "relative", height: ROW_H }}>
+                  {/* Grid background */}
+                  {Array.from({ length: TOTAL_WEEKS }, (_, i) => (
+                    <div key={i} style={{
+                      width: COL_W, flexShrink: 0, height: ROW_H,
+                      background: (i + 1) === CURRENT_WEEK ? "rgba(245,158,11,0.06)" :
+                                  i % 2 === 0 ? "rgba(255,255,255,0.015)" : "transparent",
+                      borderRight: "1px solid rgba(255,255,255,0.03)"
+                    }}/>
+                  ))}
+                  {/* Audit bars */}
+                  {audData.map(a => (
+                    <div
+                      key={a.id}
+                      onClick={() => onSelect(a)}
+                      title={`${a.num}\n${a.inst}\nSem ${a.sem_ini}–${a.sem_fin}`}
+                      style={{
+                        position: "absolute",
+                        left: (a.sem_ini - 1) * COL_W,
+                        width: (a.sem_fin - a.sem_ini + 1) * COL_W - 2,
+                        height: ROW_H - 8, top: 4,
+                        background: a.completed ? "#1E293B" : a.tipoColor,
+                        opacity: a.completed ? 0.5 : 1,
+                        borderRadius: 4,
+                        cursor: "pointer",
+                        border: a.inProgress ? `2px solid white` : "none",
+                        boxShadow: a.inProgress ? `0 0 8px ${a.tipoColor}60` : "none",
+                        transition: "opacity 0.15s",
+                        display: "flex", alignItems: "center",
+                        paddingLeft: 4, overflow: "hidden",
+                      }}
+                    >
+                      <span style={{ color: "#0F172A", fontSize: 9, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden" }}>
+                        {a.instShort}
+                      </span>
+                    </div>
+                  ))}
+                  {/* Current week line */}
+                  <div style={{
+                    position: "absolute",
+                    left: (CURRENT_WEEK - 1) * COL_W,
+                    width: 2, height: ROW_H,
+                    background: "#F59E0B", opacity: 0.8, zIndex: 10
+                  }}/>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Legend */}
+        <div style={{ display: "flex", gap: 16, marginLeft: LABEL_W, marginTop: 12, flexWrap: "wrap" }}>
+          {Object.entries(TIPO_COLOR).map(([t, c]) => (
+            <div key={t} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+              <div style={{ width: 12, height: 8, background: c, borderRadius: 2 }}/>
+              <span style={{ color: "#64748B", fontSize: 10 }}>{t}</span>
+            </div>
+          ))}
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ width: 2, height: 14, background: "#F59E0B" }}/>
+            <span style={{ color: "#F59E0B", fontSize: 10 }}>Semana actual (S{CURRENT_WEEK})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ALERTS ───────────────────────────────────────────────────────────────────
+function AlertsPanel({ data }) {
+  const alerts = data
+    .filter(a => !a.completed)
+    .map(a => ({ ...a, risk: riskScore(a) }))
+    .sort((a, b) => a.daysLeft - b.daysLeft)
+    .slice(0, 12);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 400, overflowY: "auto" }}>
+      {alerts.map(a => {
+        const r = riskLabel(a.risk);
+        const isOverdue = a.daysLeft < 0;
+        const isUrgent = !isOverdue && a.daysLeft <= 30;
+        return (
+          <div key={a.id} style={{
+            background: isOverdue ? "rgba(239,68,68,0.08)" : isUrgent ? "rgba(245,158,11,0.06)" : "rgba(255,255,255,0.03)",
+            border: `1px solid ${isOverdue ? "rgba(239,68,68,0.3)" : isUrgent ? "rgba(245,158,11,0.2)" : "rgba(255,255,255,0.06)"}`,
+            borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", gap: 12
+          }}>
+            <div style={{
+              width: 52, flexShrink: 0, textAlign: "center",
+              background: isOverdue ? "#EF4444" : isUrgent ? "#F59E0B" : "#1E293B",
+              borderRadius: 6, padding: "4px 0"
+            }}>
+              <div style={{ color: isOverdue || isUrgent ? "#0F172A" : "#64748B", fontSize: 18, fontWeight: 900, fontFamily: "monospace", lineHeight: 1 }}>
+                {isOverdue ? "VEN" : a.daysLeft}
+              </div>
+              <div style={{ color: isOverdue || isUrgent ? "#0F172A" : "#475569", fontSize: 9, fontWeight: 600 }}>
+                {isOverdue ? "CIDO" : "días"}
+              </div>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ color: "#CBD5E1", fontSize: 11, fontWeight: 700, marginBottom: 2 }}>{a.instShort}</div>
+              <div style={{ color: "#64748B", fontSize: 10, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{a.tipo} · {a.auditor}</div>
+              <div style={{ color: "#475569", fontSize: 9, marginTop: 2 }}>Fin: {a.fin_eje}</div>
+            </div>
+            <div style={{ flexShrink: 0, textAlign: "right" }}>
+              <div style={{
+                color: r.color, fontSize: 10, fontWeight: 800, letterSpacing: "0.08em",
+                background: `${r.color}18`, padding: "2px 8px", borderRadius: 4
+              }}>{r.label}</div>
+              <div style={{ color: "#334155", fontSize: 9, marginTop: 3 }}>Riesgo {a.risk}</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── AUDITOR WORKLOAD ─────────────────────────────────────────────────────────
+function WorkloadChart({ data }) {
+  const auditores = [...new Set(data.map(d => d.auditor))].sort();
+  const maxCount = Math.max(...auditores.map(a => data.filter(d => d.auditor === a).length));
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {auditores.map(aud => {
+        const audData = data.filter(d => d.auditor === aud);
+        const inProg = audData.filter(d => d.inProgress).length;
+        const total = audData.length;
+        const totalSem = audData.reduce((s, d) => s + (d.semanas || 0), 0);
+        const pct = total / maxCount;
+
+        return (
+          <div key={aud}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                <span style={{ color: "#F59E0B", fontWeight: 800, fontSize: 13, fontFamily: "monospace" }}>{aud}</span>
+                <span style={{ color: "#94A3B8", fontSize: 11 }}>{total} actos</span>
+                <span style={{ color: "#64748B", fontSize: 10 }}>· {totalSem} sem-total</span>
+              </div>
+              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                {inProg > 0 && <span style={{ background: "#10B98120", color: "#10B981", fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 10 }}>{inProg} activos</span>}
+              </div>
+            </div>
+            <div style={{ height: 18, background: "rgba(255,255,255,0.04)", borderRadius: 4, overflow: "hidden", position: "relative" }}>
+              {/* Segments by tipo */}
+              {(() => {
+                const tipos = [...new Set(audData.map(d => d.tipo))];
+                let offset = 0;
+                return tipos.map(t => {
+                  const cnt = audData.filter(d => d.tipo === t).length;
+                  const w = (cnt / maxCount) * 100;
+                  const el = (
+                    <div key={t} title={`${t}: ${cnt}`} style={{
+                      position: "absolute", left: `${offset}%`, width: `${w}%`,
+                      height: "100%", background: TIPO_COLOR[t] || "#6B7280",
+                      opacity: 0.85
+                    }}/>
+                  );
+                  offset += w;
+                  return el;
+                });
+              })()}
+              <div style={{
+                position: "absolute", top: 0, bottom: 0,
+                left: `${pct * 100}%`, right: 0,
+                background: "transparent"
+              }}/>
+            </div>
+          </div>
+        );
+      })}
+      {/* Legend */}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
+        {Object.entries(TIPO_COLOR).map(([t, c]) => (
+          <div key={t} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ width: 10, height: 10, background: c, borderRadius: 2 }}/>
+            <span style={{ color: "#475569", fontSize: 9 }}>{t.replace("Auditorías a", "Aud.").replace("Auditorías Financieras y Cumplimiento","AFC").replace("Auditorías de Cumplimiento","ADC").replace("Visitas de Inspección","VIN").replace("Visitas de Supervisión a Adquisiciones","VSA")}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── INSTITUTION CHART ────────────────────────────────────────────────────────
+function InstChart({ data }) {
+  const insts = Object.keys(INST_SHORT);
+  const maxCount = Math.max(...insts.map(i => data.filter(d => d.inst === i).length));
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {insts.map(inst => {
+        const instData = data.filter(d => d.inst === inst);
+        const short = INST_SHORT[inst];
+        const universoTotal = instData.reduce((s, d) => s + (d.universo || 0), 0);
+        const pct = instData.length / maxCount;
+
+        return (
+          <div key={inst}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <span style={{ color: "#CBD5E1", fontWeight: 700, fontSize: 12 }}>{short}</span>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span style={{ color: "#64748B", fontSize: 10 }}>{fmtM(universoTotal || null)}</span>
+                <span style={{ color: "#94A3B8", fontSize: 11, fontFamily: "monospace", fontWeight: 700 }}>{instData.length}</span>
+              </div>
+            </div>
+            <div style={{ height: 16, background: "rgba(255,255,255,0.04)", borderRadius: 4, overflow: "hidden" }}>
+              <div style={{
+                height: "100%", width: `${pct * 100}%`,
+                background: "linear-gradient(90deg, #3B82F6, #6366F1)",
+                borderRadius: 4, position: "relative", transition: "width 0.6s ease"
+              }}>
+                <div style={{
+                  position: "absolute", right: 4, top: 0, bottom: 0,
+                  display: "flex", alignItems: "center",
+                  color: "rgba(255,255,255,0.8)", fontSize: 9, fontWeight: 700
+                }}>{instData.length}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 6, marginTop: 4, flexWrap: "wrap" }}>
+              {[...new Set(instData.map(d => d.tipo))].map(t => (
+                <span key={t} style={{
+                  background: `${TIPO_COLOR[t]}22`, color: TIPO_COLOR[t],
+                  fontSize: 9, padding: "1px 6px", borderRadius: 10, fontWeight: 600
+                }}>{t.split(" ")[0].slice(0,3).toUpperCase() + " " + (t.split(" ")[1]?.[0]||"")}</span>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── RISK MATRIX ──────────────────────────────────────────────────────────────
+function RiskMatrix({ data, onSelect }) {
+  const sorted = [...data].sort((a, b) => b.risk - a.risk);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 420, overflowY: "auto" }}>
+      {sorted.map(a => {
+        const r = riskLabel(a.risk);
+        const width = a.risk;
+        return (
+          <div
+            key={a.id}
+            onClick={() => onSelect(a)}
+            style={{
+              background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "8px 12px",
+              cursor: "pointer", border: "1px solid rgba(255,255,255,0.05)",
+              transition: "background 0.15s",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span style={{ color: "#CBD5E1", fontSize: 11, fontWeight: 600 }}>{a.instShort} </span>
+                <span style={{ color: "#475569", fontSize: 10 }}>· {a.auditor} · {a.tipo.split(" ").slice(0,2).join(" ")}</span>
+              </div>
+              <div style={{
+                background: `${r.color}20`, color: r.color,
+                fontSize: 10, fontWeight: 800, padding: "2px 10px", borderRadius: 20, flexShrink: 0, marginLeft: 8,
+                letterSpacing: "0.06em"
+              }}>{r.label} · {a.risk}</div>
+            </div>
+            <div style={{ height: 6, background: "rgba(255,255,255,0.05)", borderRadius: 3 }}>
+              <div style={{
+                height: "100%", width: `${width}%`,
+                background: `linear-gradient(90deg, ${r.color}88, ${r.color})`,
+                borderRadius: 3, transition: "width 0.5s ease"
+              }}/>
+            </div>
+            <div style={{ display: "flex", gap: 12, marginTop: 5, color: "#475569", fontSize: 9 }}>
+              <span>Sem {a.sem_ini}–{a.sem_fin}</span>
+              <span>{a.daysLeft < 0 ? "⚠ VENCIDO" : `${a.daysLeft}d restantes`}</span>
+              {a.universo && <span>Universo: {fmtM(a.universo)}</span>}
+              {!a.precedente && <span style={{ color: "#F59E0B" }}>⚠ Sin precedente</span>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── HEAT MAP ─────────────────────────────────────────────────────────────────
+function WeekHeatmap({ data }) {
+  const weeks = Array.from({ length: 52 }, (_, i) => i + 1);
+  const counts = weeks.map(w => data.filter(d => w >= d.sem_ini && w <= d.sem_fin).length);
+  const maxC = Math.max(...counts);
+
+  const monthLabels = [
+    { w: 1, label: "Ene" }, { w: 5, label: "Feb" }, { w: 9, label: "Mar" },
+    { w: 14, label: "Abr" }, { w: 18, label: "May" }, { w: 22, label: "Jun" },
+    { w: 27, label: "Jul" }, { w: 31, label: "Ago" }, { w: 36, label: "Sep" },
+    { w: 40, label: "Oct" }, { w: 44, label: "Nov" }, { w: 48, label: "Dic" },
+  ];
+
+  return (
+    <div>
+      <div style={{ position: "relative", marginBottom: 2 }}>
+        {monthLabels.map(m => (
+          <span key={m.label} style={{
+            position: "absolute", left: `${(m.w - 1) / 52 * 100}%`,
+            color: "#475569", fontSize: 9, fontWeight: 600
+          }}>{m.label}</span>
+        ))}
+        <div style={{ height: 14 }}/>
+      </div>
+      <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+        {weeks.map(w => {
+          const c = counts[w - 1];
+          const intensity = c / maxC;
+          const isCurrent = w === CURRENT_WEEK;
+          return (
+            <div
+              key={w}
+              title={`Semana ${w}: ${c} auditorías activas`}
+              style={{
+                width: `calc(${100 / 52}% - 2px)`, minWidth: 10,
+                height: 28, borderRadius: 3,
+                background: c === 0 ? "rgba(255,255,255,0.04)" :
+                  `rgba(59, 130, 246, ${0.15 + intensity * 0.75})`,
+                border: isCurrent ? "2px solid #F59E0B" : "1px solid transparent",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "default"
+              }}
+            >
+              <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 8, fontWeight: 700 }}>
+                {c || ""}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8, justifyContent: "flex-end" }}>
+        <span style={{ color: "#475569", fontSize: 10 }}>Menos</span>
+        {[0, 0.2, 0.4, 0.65, 0.9].map((v, i) => (
+          <div key={i} style={{ width: 14, height: 14, borderRadius: 3, background: v === 0 ? "rgba(255,255,255,0.04)" : `rgba(59,130,246,${0.15+v*0.75})` }}/>
+        ))}
+        <span style={{ color: "#475569", fontSize: 10 }}>Más carga</span>
+      </div>
+    </div>
+  );
+}
+
+// ── DETAIL MODAL ─────────────────────────────────────────────────────────────
+function DetailPanel({ audit, onClose }) {
+  if (!audit) return null;
+  const r = riskLabel(audit.risk);
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 24
+    }} onClick={onClose}>
+      <div style={{
+        background: "#0F1929", border: "1px solid rgba(255,255,255,0.12)",
+        borderRadius: 16, padding: 28, maxWidth: 600, width: "100%",
+        maxHeight: "85vh", overflowY: "auto",
+      }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+          <div>
+            <div style={{
+              background: `${audit.tipoColor}22`, color: audit.tipoColor,
+              fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, display: "inline-block", marginBottom: 8
+            }}>{audit.tipo}</div>
+            <h3 style={{ margin: 0, color: "#F1F5F9", fontSize: 16, fontWeight: 800 }}>{audit.inst}</h3>
+            <div style={{ color: "#64748B", fontSize: 12, marginTop: 4, fontFamily: "monospace" }}>{audit.num}</div>
+          </div>
+          <button onClick={onClose} style={{
+            background: "rgba(255,255,255,0.06)", border: "none", color: "#94A3B8",
+            borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 14
+          }}>✕</button>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+          {[
+            ["Auditor", audit.auditor],
+            ["Carácter", audit.caracter],
+            ["Área", audit.area || "—"],
+            ["Semanas", `${audit.sem_ini}–${audit.sem_fin} (${audit.semanas} sem)`],
+            ["Inicio ejecución", audit.ini_eje],
+            ["Fin ejecución", audit.fin_eje],
+            ["Universo", fmt(audit.universo)],
+            ["Muestra", `${fmt(audit.muestra)} (${audit.pct}%)`],
+            ["Programa", audit.programa],
+            ["Precedente", audit.precedente || "Sin precedente"],
+          ].map(([k, v]) => (
+            <div key={k} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "10px 14px" }}>
+              <div style={{ color: "#475569", fontSize: 10, marginBottom: 3, textTransform: "uppercase", fontWeight: 600 }}>{k}</div>
+              <div style={{ color: "#CBD5E1", fontSize: 12 }}>{v}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "12px 16px", marginBottom: 16 }}>
+          <div style={{ color: "#475569", fontSize: 10, marginBottom: 6, textTransform: "uppercase", fontWeight: 600 }}>Objetivo</div>
+          <div style={{ color: "#94A3B8", fontSize: 12, lineHeight: 1.6 }}>{audit.objetivo}...</div>
+        </div>
+
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ flex: 1, background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "10px 14px" }}>
+            <div style={{ color: "#475569", fontSize: 10, marginBottom: 4, textTransform: "uppercase", fontWeight: 600 }}>Índice de Riesgo</div>
+            <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, marginBottom: 6 }}>
+              <div style={{ height: "100%", width: `${audit.risk}%`, background: `linear-gradient(90deg, ${r.color}80, ${r.color})`, borderRadius: 4 }}/>
+            </div>
+            <div style={{ color: r.color, fontWeight: 800, fontSize: 18, fontFamily: "monospace" }}>{audit.risk} / 100</div>
+          </div>
+          <div style={{
+            background: `${r.color}15`, border: `1px solid ${r.color}40`,
+            borderRadius: 8, padding: "12px 20px", textAlign: "center"
+          }}>
+            <div style={{ color: r.color, fontSize: 22, fontWeight: 900, letterSpacing: "0.04em" }}>{r.label}</div>
+            <div style={{ color: "#475569", fontSize: 10, marginTop: 4 }}>
+              {audit.daysLeft < 0 ? `Vencido hace ${Math.abs(audit.daysLeft)}d` : `${audit.daysLeft} días restantes`}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── FINANCE TREEMAP ──────────────────────────────────────────────────────────
+function FinanceBar({ data }) {
+  const byInst = Object.entries(INST_SHORT).map(([inst, short]) => {
+    const instData = data.filter(d => d.inst === inst);
+    const u = instData.reduce((s, d) => s + (d.universo || 0), 0);
+    return { short, universo: u, count: instData.length };
+  }).filter(d => d.universo > 0).sort((a, b) => b.universo - a.universo);
+
+  const maxU = byInst[0]?.universo || 1;
+
+  const COLORS = ["#3B82F6","#8B5CF6","#10B981","#F59E0B","#EC4899","#EF4444","#06B6D4","#84CC16"];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {byInst.map((d, i) => (
+        <div key={d.short}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ color: "#CBD5E1", fontSize: 12, fontWeight: 600 }}>{d.short}</span>
+            <span style={{ color: COLORS[i], fontSize: 12, fontWeight: 800, fontFamily: "monospace" }}>{fmtM(d.universo)}</span>
+          </div>
+          <div style={{ height: 20, background: "rgba(255,255,255,0.04)", borderRadius: 4 }}>
+            <div style={{
+              height: "100%", width: `${(d.universo / maxU) * 100}%`,
+              background: `linear-gradient(90deg, ${COLORS[i]}60, ${COLORS[i]})`,
+              borderRadius: 4
+            }}/>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── MAIN APP ─────────────────────────────────────────────────────────────────
+export default function App() {
+  const [tab, setTab] = useState("dashboard");
+  const [selected, setSelected] = useState(null);
+  const [filterAud, setFilterAud] = useState("TODOS");
+  const [filterTipo, setFilterTipo] = useState("TODOS");
+  const [search, setSearch] = useState("");
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const filteredData = useMemo(() => DATA.filter(a => {
+    if (filterAud !== "TODOS" && a.auditor !== filterAud) return false;
+    if (filterTipo !== "TODOS" && a.tipo !== filterTipo) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return a.inst.toLowerCase().includes(q) || a.num.toLowerCase().includes(q) || a.auditor.toLowerCase().includes(q);
+    }
+    return true;
+  }), [filterAud, filterTipo, search]);
+
+  const totalUniverso = DATA.reduce((s, d) => s + (d.universo || 0), 0);
+  const inProgress = DATA.filter(d => d.inProgress).length;
+  const vencidas = DATA.filter(d => d.daysLeft < 0).length;
+  const altoRiesgo = DATA.filter(d => riskScore(d) >= 60).length;
+
+  const tabs = [
+    { id: "dashboard", label: "Panel General", icon: "📊" },
+    { id: "gantt", label: "Cronograma Gantt", icon: "📅" },
+    { id: "riesgo", label: "Riesgo", icon: "⚠️" },
+    { id: "carga", label: "Carga Auditores", icon: "👥" },
+    { id: "financiero", label: "Universo Financiero", icon: "💰" },
+    { id: "catalogo", label: "Catálogo", icon: "📋" },
+  ];
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: "#07101E",
+      fontFamily: "'Inter', -apple-system, system-ui, sans-serif",
+      color: "#CBD5E1",
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+        input::placeholder { color: #334155 !important; }
+      `}</style>
+
+      {/* HEADER */}
+      <div style={{
+        background: "linear-gradient(180deg, #0B1726 0%, #07101E 100%)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 10,
+            background: "linear-gradient(135deg, #1D4ED8, #1E40AF)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 20, boxShadow: "0 0 20px rgba(29,78,216,0.4)"
+          }}>🛡️</div>
+          <div>
+            <div style={{ color: "#F1F5F9", fontWeight: 900, fontSize: 15, letterSpacing: "0.02em" }}>
+              TABLERO PAF 2026 — OIC SADER
+            </div>
+            <div style={{ color: "#475569", fontSize: 11 }}>
+              Programa Anual de Fiscalización · Semana actual: S{CURRENT_WEEK} · {now.toLocaleDateString("es-MX", { weekday:"long", day:"numeric", month:"long" })}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {vencidas > 0 && (
+            <div style={{
+              background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)",
+              color: "#EF4444", borderRadius: 20, padding: "4px 12px",
+              fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 6
+            }}>
+              <span style={{ animation: "pulse 1.5s infinite" }}>●</span>
+              {vencidas} auditoría{vencidas !== 1 ? "s" : ""} vencida{vencidas !== 1 ? "s" : ""}
+            </div>
+          )}
+          <div style={{
+            background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)",
+            color: "#10B981", borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 700
+          }}>
+            {inProgress} en ejecución
+          </div>
+        </div>
+      </div>
+
+      {/* TABS */}
+      <div style={{
+        padding: "0 32px", background: "#07101E",
+        borderBottom: "1px solid rgba(255,255,255,0.05)",
+        display: "flex", gap: 2
+      }}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            background: tab === t.id ? "rgba(255,255,255,0.07)" : "transparent",
+            border: "none", borderBottom: `2px solid ${tab === t.id ? "#3B82F6" : "transparent"}`,
+            color: tab === t.id ? "#F1F5F9" : "#475569",
+            padding: "12px 16px", cursor: "pointer",
+            fontSize: 12, fontWeight: tab === t.id ? 700 : 500,
+            display: "flex", alignItems: "center", gap: 6,
+            transition: "all 0.15s", letterSpacing: "0.02em"
+          }}>
+            {t.icon} {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* BODY */}
+      <div style={{ padding: "24px 32px", maxWidth: 1600, margin: "0 auto" }}>
+
+        {/* ── DASHBOARD ── */}
+        {tab === "dashboard" && (
+          <>
+            {/* KPIs */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 28 }}>
+              <KPICard icon="📋" title="Total Actos" value={DATA.length} sub="PAF 2026 integrado" accent="#3B82F6"/>
+              <KPICard icon="⚙️" title="En Ejecución" value={inProgress} sub={`Semana ${CURRENT_WEEK} activa`} accent="#10B981"/>
+              <KPICard icon="✅" title="Concluidos" value={DATA.filter(d=>d.completed).length} sub="Por semana de ejecución" accent="#6366F1"/>
+              <KPICard icon="⏳" title="Pendientes" value={DATA.filter(d=>d.pending).length} sub="Aún no iniciados" accent="#F59E0B"/>
+              <KPICard icon="⚠️" title="Alto Riesgo" value={altoRiesgo} sub="Índice ≥ 60" accent="#EF4444"/>
+              <KPICard icon="💰" title="Universo Total" value={`$${(totalUniverso/1e9).toFixed(1)}Bn`} sub="Recursos bajo revisión" accent="#EC4899"/>
+              <KPICard icon="🏛️" title="Instituciones" value={8} sub="Entes fiscalizados" accent="#06B6D4"/>
+              <KPICard icon="👥" title="Auditores" value={8} sub="Grupos revisores" accent="#84CC16"/>
+            </div>
+
+            {/* Row 2 */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 20 }}>
+                <SectionHeader title="Alertas de Vencimiento" icon="🔔"/>
+                <AlertsPanel data={DATA}/>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 20 }}>
+                <SectionHeader title="Riesgo de Incumplimiento" icon="⚠️"/>
+                <RiskMatrix data={DATA.slice(0,10)} onSelect={setSelected}/>
+              </div>
+            </div>
+
+            {/* Row 3 */}
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 20 }}>
+              <SectionHeader title="Mapa de Calor — Carga Semanal" icon="🌡️"/>
+              <WeekHeatmap data={DATA}/>
+            </div>
+          </>
+        )}
+
+        {/* ── GANTT ── */}
+        {tab === "gantt" && (
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+            <SectionHeader title={`Cronograma Gantt — 52 Semanas 2026 (Actual: S${CURRENT_WEEK})`} icon="📅"/>
+            <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+              <select value={filterAud} onChange={e => setFilterAud(e.target.value)} style={{
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                color: "#CBD5E1", borderRadius: 8, padding: "6px 12px", fontSize: 12
+              }}>
+                <option value="TODOS">Todos los auditores</option>
+                {[...new Set(DATA.map(d => d.auditor))].sort().map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+              <select value={filterTipo} onChange={e => setFilterTipo(e.target.value)} style={{
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                color: "#CBD5E1", borderRadius: 8, padding: "6px 12px", fontSize: 12
+              }}>
+                <option value="TODOS">Todos los tipos</option>
+                {[...new Set(DATA.map(d => d.tipo))].map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <GanttChart data={filteredData} onSelect={setSelected}/>
+            <div style={{ marginTop: 16, color: "#475569", fontSize: 11 }}>
+              Haz clic en cualquier barra para ver el detalle del acto de fiscalización. Las barras con borde blanco están actualmente en ejecución.
+            </div>
+          </div>
+        )}
+
+        {/* ── RIESGO ── */}
+        {tab === "riesgo" && (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
+              {[
+                { label: "Alto Riesgo (≥60)", count: DATA.filter(d=>riskScore(d)>=60).length, color: "#EF4444", desc: "Requieren atención inmediata" },
+                { label: "Riesgo Medio (35-59)", count: DATA.filter(d=>riskScore(d)>=35&&riskScore(d)<60).length, color: "#F59E0B", desc: "Monitoreo cercano" },
+                { label: "Bajo Riesgo (<35)", count: DATA.filter(d=>riskScore(d)<35).length, color: "#10B981", desc: "Ejecución normal" },
+              ].map(r => (
+                <div key={r.label} style={{
+                  background: `${r.color}10`, border: `1px solid ${r.color}30`,
+                  borderRadius: 12, padding: "20px 24px"
+                }}>
+                  <div style={{ color: r.color, fontSize: 36, fontWeight: 900, fontFamily: "monospace" }}>{r.count}</div>
+                  <div style={{ color: "#CBD5E1", fontSize: 13, fontWeight: 700, marginTop: 4 }}>{r.label}</div>
+                  <div style={{ color: "#64748B", fontSize: 11, marginTop: 2 }}>{r.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+              <SectionHeader title="Matriz de Riesgo Completa — Todos los Actos" icon="⚠️"/>
+              <div style={{ marginBottom: 12, color: "#475569", fontSize: 11 }}>
+                El índice integra: proximidad de vencimiento · duración · tamaño del universo · existencia de auditoría precedente · tipo de acto. Clic en cada elemento para detalles.
+              </div>
+              <RiskMatrix data={DATA} onSelect={setSelected}/>
+            </div>
+          </div>
+        )}
+
+        {/* ── CARGA ── */}
+        {tab === "carga" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+              <SectionHeader title="Carga de Trabajo por Auditor" icon="👥"/>
+              <WorkloadChart data={DATA}/>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+              <SectionHeader title="Auditorías por Institución" icon="🏛️"/>
+              <InstChart data={DATA}/>
+            </div>
+          </div>
+        )}
+
+        {/* ── FINANCIERO ── */}
+        {tab === "financiero" && (
+          <div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+                <SectionHeader title="Universo por Institución" icon="🏛️"/>
+                <FinanceBar data={DATA}/>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+                <SectionHeader title="Distribución por Tipo de Acto" icon="📊"/>
+                {Object.entries(TIPO_COLOR).map(([tipo, color]) => {
+                  const u = DATA.filter(d=>d.tipo===tipo).reduce((s,d)=>s+(d.universo||0),0);
+                  const cnt = DATA.filter(d=>d.tipo===tipo).length;
+                  return (
+                    <div key={tipo} style={{ marginBottom: 14 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                        <span style={{color:"#CBD5E1",fontSize:12}}>{tipo}</span>
+                        <div style={{display:"flex",gap:12}}>
+                          <span style={{color:"#64748B",fontSize:11}}>{cnt} actos</span>
+                          <span style={{color,fontSize:12,fontWeight:700,fontFamily:"monospace"}}>{fmtM(u||null)}</span>
+                        </div>
+                      </div>
+                      <div style={{height:14,background:"rgba(255,255,255,0.04)",borderRadius:4}}>
+                        <div style={{height:"100%",width:`${cnt/DATA.length*100}%`,background:`${color}aa`,borderRadius:4}}/>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div style={{marginTop:16,padding:16,background:"rgba(255,255,255,0.03)",borderRadius:10}}>
+                  <div style={{color:"#475569",fontSize:11,marginBottom:4}}>UNIVERSO TOTAL FISCALIZADO</div>
+                  <div style={{color:"#F1F5F9",fontSize:28,fontWeight:900,fontFamily:"monospace"}}>{fmt(totalUniverso)}</div>
+                  <div style={{color:"#64748B",fontSize:11,marginTop:4}}>Recursos públicos bajo revisión PAF 2026</div>
+                </div>
+              </div>
+            </div>
+            {/* Top 5 por monto */}
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: 24 }}>
+              <SectionHeader title="Top 10 — Auditorías por Monto de Universo" icon="🏆"/>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                {[...DATA].filter(d=>d.universo).sort((a,b)=>b.universo-a.universo).slice(0,10).map((a, i) => (
+                  <div key={a.id} onClick={() => setSelected(a)} style={{
+                    background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)",
+                    borderRadius:8, padding:"12px 14px", cursor:"pointer",
+                    display:"flex", gap:12, alignItems:"center"
+                  }}>
+                    <div style={{
+                      width:28, height:28, borderRadius:8, flexShrink:0,
+                      background: i < 3 ? ["linear-gradient(135deg,#F59E0B,#D97706)","linear-gradient(135deg,#94A3B8,#64748B)","linear-gradient(135deg,#C2855A,#92522A)"][i] : "rgba(255,255,255,0.06)",
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      color:"#0F172A", fontWeight:900, fontSize:12
+                    }}>{i+1}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{color:"#CBD5E1",fontSize:11,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.instShort}</div>
+                      <div style={{color:"#475569",fontSize:10}}>{a.tipo.split(" ").slice(0,2).join(" ")}</div>
+                    </div>
+                    <div style={{color:a.tipoColor,fontWeight:800,fontSize:12,fontFamily:"monospace",flexShrink:0}}>{fmtM(a.universo)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── CATÁLOGO ── */}
+        {tab === "catalogo" && (
+          <div>
+            <div style={{ display:"flex", gap:12, marginBottom:16, flexWrap:"wrap" }}>
+              <input
+                value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Buscar institución, número, auditor..."
+                style={{
+                  background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.1)",
+                  color:"#CBD5E1", borderRadius:8, padding:"8px 14px", fontSize:12,
+                  minWidth:280, outline:"none"
+                }}
+              />
+              <select value={filterAud} onChange={e => setFilterAud(e.target.value)} style={{
+                background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.1)",
+                color:"#CBD5E1", borderRadius:8, padding:"8px 12px", fontSize:12
+              }}>
+                <option value="TODOS">Todos los auditores</option>
+                {[...new Set(DATA.map(d => d.auditor))].sort().map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+              <select value={filterTipo} onChange={e => setFilterTipo(e.target.value)} style={{
+                background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,255,255,0.1)",
+                color:"#CBD5E1", borderRadius:8, padding:"8px 12px", fontSize:12
+              }}>
+                <option value="TODOS">Todos los tipos</option>
+                {[...new Set(DATA.map(d => d.tipo))].map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+              <div style={{
+                background:"rgba(255,255,255,0.04)", borderRadius:8, padding:"8px 14px",
+                color:"#64748B", fontSize:12
+              }}>
+                {filteredData.length} de {DATA.length} actos
+              </div>
+            </div>
+
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              {filteredData.map(a => {
+                const r = riskLabel(a.risk);
+                const status = a.completed ? { label:"CONCLUIDO", color:"#6366F1" } :
+                               a.inProgress ? { label:"EN EJECUCIÓN", color:"#10B981" } :
+                               { label:"PENDIENTE", color:"#F59E0B" };
+                return (
+                  <div key={a.id} onClick={() => setSelected(a)} style={{
+                    background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)",
+                    borderRadius:10, padding:"14px 18px", cursor:"pointer",
+                    display:"grid", gridTemplateColumns:"1fr 140px 100px 80px 80px",
+                    gap:12, alignItems:"center",
+                    transition:"background 0.15s"
+                  }}>
+                    <div style={{minWidth:0}}>
+                      <div style={{
+                        display:"inline-block", background:`${a.tipoColor}18`,
+                        color:a.tipoColor, fontSize:9, fontWeight:700, padding:"2px 8px",
+                        borderRadius:10, marginBottom:4
+                      }}>{a.tipo.split(" ").slice(0,3).join(" ")}</div>
+                      <div style={{color:"#F1F5F9",fontSize:13,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.inst}</div>
+                      <div style={{color:"#475569",fontSize:10,fontFamily:"monospace",marginTop:2}}>{a.num}</div>
+                    </div>
+                    <div style={{textAlign:"center"}}>
+                      <div style={{color:"#94A3B8",fontSize:11,marginBottom:2}}>Ejecución</div>
+                      <div style={{color:"#CBD5E1",fontSize:11,fontWeight:600}}>S{a.sem_ini}–S{a.sem_fin}</div>
+                      <div style={{color:"#475569",fontSize:10}}>({a.semanas} sem)</div>
+                    </div>
+                    <div style={{textAlign:"center"}}>
+                      <div style={{color:status.color,fontSize:10,fontWeight:700,letterSpacing:"0.06em"}}>{status.label}</div>
+                      <div style={{color:"#475569",fontSize:9,marginTop:2}}>{a.auditor}</div>
+                    </div>
+                    <div style={{textAlign:"center"}}>
+                      <div style={{color:r.color,fontSize:11,fontWeight:800}}>{r.label}</div>
+                      <div style={{color:"#475569",fontSize:10}}>{a.risk}/100</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{color:"#CBD5E1",fontSize:11,fontWeight:700}}>{fmtM(a.universo)}</div>
+                      <div style={{color:"#475569",fontSize:9}}>{a.daysLeft < 0 ? "Vencida" : `${a.daysLeft}d`}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* DETAIL PANEL */}
+      {selected && <DetailPanel audit={selected} onClose={() => setSelected(null)}/>}
+    </div>
+  );
+}
